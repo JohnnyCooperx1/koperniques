@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
+    <sec:authentication-manager alias="authenticationManager">
+        <sec:authentication-provider ref="preAuthenticationProvider"/>
+        <sec:authentication-provider ref="customUserDetailsAuthenticationProvider"/>
+    </sec:authentication-manager>
+
+    <!--<sec:authentication-manager alias="authenticationManager">-->
+    <!--<sec:authentication-provider user-service-ref="userDetailsService">-->
+    <!--<sec:password-encoder ref="passwordEncoder"/>-->
+    <!--</sec:authentication-provider>-->
+    <!--</sec:authentication-manager>-->
+
+    <!--<sec:user-service id="userDetailsService">-->
+
+
+    <!--</sec:user-service>-->
+    <!-- Resources -->
+    <sec:http pattern="/resources/**" security="none"/>
+    <sec:http pattern="/favicon.ico" security="none"/>
+    <sec:http pattern="/auth/**" security="none"/>
+    <sec:http pattern="/soap/**" security="none"/>
+    <sec:http pattern="/rest/**" security="none"/>
+
+
+    <!--Basic Api -->
+    <!--
+        <sec:http use-expressions="true" pattern="/api/**" create-session="stateless">
+            <sec:intercept-url pattern="/api/**" access="isFullyAuthenticated() and hasIpAddress('${security.api.ip.filter}')"/>
+            <sec:http-basic authentication-details-source-ref="customAuthenticationDetailsSource" entry-point-ref="basicAuthEntryPoint"/>
+            <sec:custom-filter position="PRE_AUTH_FILTER" ref="preAuthFilter" />
+        </sec:http>
+    -->
+
+    <bean id="basicAuthEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <property name="realmName" value="REST API REAL"/>
+    </bean>
+
+
+    <!-- Form -->
+    <sec:http auto-config="false" use-expressions="true">
+        <sec:intercept-url pattern="/j_spring_security_check" access="permitAll"/>
+
+        <sec:intercept-url pattern="/home.form" access="isFullyAuthenticated()"/>
+        <sec:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+
+        <sec:form-login login-page="/auth/login.form"
+                        default-target-url="/home.form"
+                        always-use-default-target="true"
+                        login-processing-url="/j_spring_security_check"
+                        authentication-failure-url="/auth/error.form"
+                        authentication-success-handler-ref="customAuthenticationSuccessHandler"
+                        authentication-details-source-ref="customAuthenticationDetailsSource"/>
+        <sec:logout invalidate-session="true"
+                    logout-url="/j_spring_security_logout"
+                    success-handler-ref="customLogoutSuccessHandler"
+                    delete-cookies="JSESSIONID"/>
+        <!--logout-success-url="/auth/logout.form"-->
+        <!---->
+        <sec:access-denied-handler error-page="/auth/denied.form" />
+
+        <sec:session-management invalid-session-url="/auth/login.form" session-fixation-protection="none">
+            <sec:concurrency-control max-sessions="3" error-if-maximum-exceeded="true"/>
+
+        </sec:session-management>
+
+
+
+        <sec:http-basic authentication-details-source-ref="customAuthenticationDetailsSource"/>
+    </sec:http>
+
+    <bean id="preAuthFilter" class="server.security.HeaderAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="principalRequestHeader" value="${security.principal.header.name}"/>
+        <property name="exceptionIfHeaderMissing" value="false"/>
+    </bean>
+
+    <bean id="preAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService">
+            <bean id="preAuthUserDetailsServiceWrapper" class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                <property name="userDetailsService" ref="preAuthenticationUserDetailsService"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="customAuthenticationSuccessHandler" class="server.security.CustomAuthenticationSuccessHandler">
+        <constructor-arg value="/home.form"/>
+    </bean>
+
+    <bean id="customLogoutSuccessHandler" class="server.security.CustomLogoutSuccessHandler"/>
+
+    <bean id="customAuthenticationDetailsSource" class="server.security.CustomAuthenticationDetailsSource"/>
+
+    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <property name="permissionEvaluator" ref="customPermissionEvaluator"/>
+    </bean>
+
+    <bean id="customPermissionEvaluator" class="server.security.CustomPermissionEvaluator">
+        <constructor-arg index="0">
+            <map key-type="java.lang.String" value-type="server.security.Permission">
+                <entry key="read" value-ref="readPermission"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="readPermission" class="server.security.ReadPermission"/>
+
+</beans>
