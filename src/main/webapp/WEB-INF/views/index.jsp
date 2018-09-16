@@ -13,29 +13,29 @@
 <link href='http://fonts.googleapis.com/css?family=Josefin+Sans:600' rel='stylesheet' type='text/css'>
 
 <!-- font awesome -->
-     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/bootstrap/css/font-awesome.min.css"/>" charset="utf-8"/>
+     <link rel="stylesheet" type="text/css" href="<c:url value="${pageContext.request.contextPath}/assets/bootstrap/css/font-awesome.min.css"/>" charset="utf-8"/>
 <%--<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">--%>
 
 <!-- bootstrap -->
-    <link rel="stylesheet" type="text/css" href="<c:url value="/assets/bootstrap/css/bootstrap.min.css"/>" charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="${pageContext.request.contextPath}/assets/bootstrap/css/bootstrap.min.css"/>" charset="utf-8"/>
 <%--<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />--%>
 
 <!-- animate.css -->
-    <link rel="stylesheet" type="text/css" href="<c:url value="/assets/animate/animate.css"/>" charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="${pageContext.request.contextPath}/assets/animate/animate.css"/>" charset="utf-8"/>
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/animate/set.css"/>" charset="utf-8"/>
 <%--<link rel="stylesheet" href="assets/animate/set.css" />--%>
 
 <!-- gallery -->
-    <link rel="stylesheet" type="text/css" href="<c:url value="/assets/gallery/blueimp-gallery.min.css"/>" charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="${pageContext.request.contextPath}/assets/gallery/blueimp-gallery.min.css"/>" charset="utf-8"/>
 <%--<link rel="stylesheet" href="assets/gallery/blueimp-gallery.min.css">--%>
 
 <!-- favicon -->
-    <link rel="shortcut icon"  href="<c:url value="/images/favicon.ico"/>" type="image/x-icon"/>
+    <link rel="shortcut icon"  href="<c:url value="${pageContext.request.contextPath}/images/favicon.ico"/>" type="image/x-icon"/>
 <%--<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">--%>
 <%--<link rel="icon" href="images/favicon.ico" type="image/x-icon">--%>
 
 
-    <link rel="shortcut icon"  href="<c:url value="/assets/style.css"/>" type="image/x-icon"/>
+    <link rel="shortcut icon"  href="<c:url value="${pageContext.request.contextPath}/assets/style.css"/>" type="image/x-icon"/>
 <%--<link rel="stylesheet" href="assets/style.css">--%>
 
 </head>
@@ -51,7 +51,7 @@
           <div class="container">
             <div class="navbar-header">
               <!-- Logo Starts -->
-              <a class="navbar-brand" href="#home"><img src = "<c:url value="/images/logo.png"/>" alt="logo"></a>
+              <a class="navbar-brand" href="#home"><img src = "<c:url value="${pageContext.request.contextPath}/images/logo.png"/>" alt="logo"></a>
               <!-- #Logo Ends -->
 
 

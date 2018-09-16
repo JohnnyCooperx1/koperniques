@@ -4,29 +4,20 @@ import com.alibaba.fastjson.support.jaxrs.FastJsonProvider;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
@@ -44,7 +35,6 @@ import java.util.Properties;
 @EnableWebMvc
 @Configuration
 @ComponentScan(basePackages = {"server.dao","server.controller"})
-//@ImportResource({"WEB-INF/spring-security.xml"})
 public class AppConfig extends WebMvcConfigurerAdapter{
 
 
@@ -56,6 +46,7 @@ public class AppConfig extends WebMvcConfigurerAdapter{
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
 //        converters.add(new MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(true).build()));
     }
+
     @Bean
     public MappingJackson2HttpMessageConverter converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -89,6 +80,11 @@ public class AppConfig extends WebMvcConfigurerAdapter{
         resolver.setOrder(0);
         return resolver;
     }
+    @Bean
+    public NamedParameterJdbcTemplate jdbcTemplate() {
+        return new NamedParameterJdbcTemplate(dataSource());
+    }
+
 
     @Bean
     public TilesConfigurer tilesConfigurer() {
@@ -165,7 +161,7 @@ public class AppConfig extends WebMvcConfigurerAdapter{
         properties.setProperty("hibernate.connection.release_mode", "auto");
         properties.setProperty("hibernate.connection.oracle.jdbc.ReadTimeout", "9999");
         properties.setProperty("hibernate.transaction.auto_close_session", "true");
-
+        properties.setProperty("hibernate.javax.cache.missing_cache_strategy", "create");
         result.setHibernateProperties(properties);
 
         try {
